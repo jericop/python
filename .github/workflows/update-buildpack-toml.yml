@@ -21,9 +21,23 @@ jobs:
       with:
         branch: automation/buildpack.toml/update
 
+    - uses: buildpacks/github-actions/setup-tools@v5.5.4
+    - name: Determine value of `jam update-buildpack` --no-cnb-registry flag
+      id: no-cnb-registry-check
+      run: |
+        if [[ $(cat package.toml | yj -tj | jq -r '.dependencies[].uri' | grep urn:cnb:registry) ]]; then
+          echo "package.toml has cnb registry dependencies, no-cnb-registry will be set to false"
+          echo "no-cnb-registry=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "package.toml does not have cnb registry dependencies, no-cnb-registry will be set to true"
+          echo "no-cnb-registry=true" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Update buildpack.toml
       id: update
       uses: paketo-buildpacks/github-config/actions/buildpack/update@main
+      with:
+        no_cnb_registry: ${{ steps.no-cnb-registry-check.outputs.no-cnb-registry }}
 
     - name: Commit
       id: commit
