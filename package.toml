@@ -3,57 +3,49 @@
   uri = "build/buildpack.tgz"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/cpython:1.17.1"
+  uri = "urn:cnb:registry:paketo-buildpacks/cpython@1.15.11"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/pip:0.23.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/pip@0.22.1"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/pipenv:1.22.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/pipenv@1.21.6"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/pipenv-install:0.7.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/pipenv-install@0.6.24"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/pip-install:0.6.6"
+  uri = "urn:cnb:registry:paketo-buildpacks/pip-install@0.6.6"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/python-start:0.15.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/python-start@0.14.19"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/miniconda:0.11.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/miniconda@0.10.4"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/conda-env-update:0.7.14"
+  uri = "urn:cnb:registry:paketo-buildpacks/conda-env-update@0.7.14"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/poetry:0.11.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/poetry@0.10.0"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/poetry-install:0.6.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/poetry-install@0.5.0"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/poetry-run:0.5.0"
+  uri = "urn:cnb:registry:paketo-buildpacks/poetry-run@0.4.36"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/procfile:5.11.3"
+  uri = "urn:cnb:registry:paketo-buildpacks/procfile@5.11.2"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/environment-variables:4.9.3"
+  uri = "urn:cnb:registry:paketo-buildpacks/environment-variables@4.9.2"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/ca-certificates:3.10.4"
+  uri = "urn:cnb:registry:paketo-buildpacks/ca-certificates@3.10.3"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/image-labels:4.10.2"
+  uri = "urn:cnb:registry:paketo-buildpacks/image-labels@4.10.1"
 
 [[dependencies]]
-  uri = "docker://docker.io/paketobuildpacks/watchexec:3.5.4"
-
-[[targets]]
-  arch = "amd64"
-  os = "linux"
-
-[[targets]]
-  arch = "arm64"
-  os = "linux"
+  uri = "urn:cnb:registry:paketo-buildpacks/watchexec@3.5.3"
