@@ -114,7 +114,7 @@ jobs:
         crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_major }}"
         crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:latest"
 
-        echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
+        echo "image=${DOCKERHUB_REGISTRY}/${REPOSITORY}" >> "$GITHUB_OUTPUT"
         echo "digest=$pushed_image_index_digest" >> "$GITHUB_OUTPUT"
 
     - name: Register with CNB Registry
