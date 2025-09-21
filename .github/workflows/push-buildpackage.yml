@@ -33,6 +33,20 @@ jobs:
         echo "tag_major=${MAJOR_VERSION}" >> "$GITHUB_OUTPUT"
         echo "download_tgz_file_url=$(jq -r '.release.assets[] | select(.name | endswith(".tgz")) | .url' "${GITHUB_EVENT_PATH}")" >> "$GITHUB_OUTPUT"
 
+        repo_owner1="$GITHUB_REPOSITORY_OWNER"
+        echo "repo_owner1 is '$repo_owner1'"
+        if echo "$repo_owner1" | grep -q \*; then echo repo_owner1 is readacted; else echo repo_owner1 is not redacted; fi
+
+        repo_owner2="$(echo $GITHUB_REPOSITORY_OWNER)"
+        echo "repo_owner2 is '$repo_owner2'"
+        if echo "$repo_owner2" | grep -q \*; then echo repo_owner2 is readacted; else echo repo_owner2 is not redacted; fi
+
+        echo $GITHUB_REPOSITORY_OWNER > repo_owner.txt
+        echo "Contents of repo_owner.txt:"
+        cat repo_owner.txt
+        repo_owner3="$(cat repo_owner.txt)"
+        if echo "$repo_owner3" | grep -q \*; then echo repo_owner3 is readacted; else echo repo_owner3 is not redacted; fi
+
         echo "GITHUB_REPOSITORY_OWNER is '$GITHUB_REPOSITORY_OWNER'"
         # This is a workaround for testing in forks because GITHUB_REPOSITORY_OWNER is redacted and unavailable from the github context
         if echo "$GITHUB_REPOSITORY_OWNER" | grep -q \*; then
