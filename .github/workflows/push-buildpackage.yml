@@ -33,6 +33,7 @@ jobs:
         echo "tag_major=${MAJOR_VERSION}" >> "$GITHUB_OUTPUT"
         echo "download_tgz_file_url=$(jq -r '.release.assets[] | select(.name | endswith(".tgz")) | .url' "${GITHUB_EVENT_PATH}")" >> "$GITHUB_OUTPUT"
 
+        echo "GITHUB_REPOSITORY_OWNER is '$GITHUB_REPOSITORY_OWNER'"
         # This is a workaround for testing in forks because GITHUB_REPOSITORY_OWNER is redacted and unavailable from the github context
         if echo "$GITHUB_REPOSITORY_OWNER" | grep -q \*; then
           echo "GITHUB_REPOSITORY_OWNER is redacted. Determining repo owner from .git/config"
