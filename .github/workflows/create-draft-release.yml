@@ -22,7 +22,7 @@ jobs:
       builders: ${{ steps.builders.outputs.builders }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Get builders from integration.json
       id: builders
       run: |
@@ -41,15 +41,15 @@ jobs:
       fail-fast: false  # don't cancel all test jobs when one fails
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version-file: go.mod
     - name: Run Integration Tests
       env:
         TMPDIR: "${{ runner.temp }}"
-      run: echo ./scripts/integration.sh --builder ${{ matrix.builder }}
+      run: ./scripts/integration.sh --builder ${{ matrix.builder }}
 
   release:
     name: Release
@@ -57,7 +57,7 @@ jobs:
     needs: integration
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-tags: true
     - name: Reset Draft Release
@@ -83,18 +83,7 @@ jobs:
         fi
         echo "tag=${tag}" >> "$GITHUB_OUTPUT"
     - name: Package
-      run: |
-        ./scripts/package.sh --version "${{ steps.tag.outputs.tag }}"
-
-        # Create an archive with everything needed to run `pack buildpack package` and push to a registry
-        temp_dir=$(mktemp -d)
-        cp package.toml $temp_dir/
-        tar -xzf build/buildpack.tgz -C $temp_dir/ buildpack.toml
-        mkdir -p $temp_dir/build
-        cp build/buildpack.tgz $temp_dir/build
-        echo "Creating buildpack-release-artifact.tgz"
-        tar -cvzf build/buildpack-release-artifact.tgz -C $temp_dir $(ls $temp_dir)
-        rm -rf $temp_dir
+      run: ./scripts/package.sh --version "${{ steps.tag.outputs.tag }}"
     - name: Create Release Notes
       id: create-release-notes
       uses: paketo-buildpacks/github-config/actions/release/notes@main
@@ -117,11 +106,6 @@ jobs:
               "path": "build/buildpackage.cnb",
               "name": "${{ github.event.repository.name }}-${{ steps.tag.outputs.tag }}.cnb",
               "content_type": "application/x-tar"
-            },
-            {
-              "path": "build/buildpack-release-artifact.tgz",
-              "name": "${{ github.event.repository.name }}-${{ steps.tag.outputs.tag }}.tgz",
-              "content_type": "application/gzip"
             }
           ]
 
