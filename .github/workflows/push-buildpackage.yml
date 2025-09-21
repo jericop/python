@@ -102,19 +102,19 @@ jobs:
       if: ${{  steps.parse_configs.outputs.push_to_dockerhub == 'true' }}
       id: push
       run: |
-        REPOSITORY="${GITHUB_REPOSITORY_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/bundle-install' to 'paketobuildpacks/bundle-install'
+        IMAGE="${GITHUB_REPOSITORY_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/bundle-install' to 'paketobuildpacks/bundle-install'
 
         ./scripts/publish.sh \
           --archive-path buildpack-release-artifact.tgz \
-          --image-ref "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}"
+          --image-ref "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}"
 
-        pushed_image_index_digest=$(crane digest "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" | xargs)
+        pushed_image_index_digest=$(crane digest "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" | xargs)
 
-        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_minor }}"
-        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_major }}"
-        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:latest"
+        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_minor }}"
+        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_major }}"
+        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:latest"
 
-        echo "image=${DOCKERHUB_REGISTRY}/${REPOSITORY}" >> "$GITHUB_OUTPUT"
+        echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
         echo "digest=$pushed_image_index_digest" >> "$GITHUB_OUTPUT"
 
     - name: Register with CNB Registry
@@ -122,7 +122,7 @@ jobs:
       with:
         id: ${{ github.repository }}
         version: ${{ steps.event.outputs.tag_full }}
-        address: ${{ steps.push.outputs.image }}@${{ steps.push.outputs.digest }}
+        address: index.docker.io/${{ steps.push.outputs.image }}@${{ steps.push.outputs.digest }}
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
 
   failure:
