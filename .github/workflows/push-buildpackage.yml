@@ -33,33 +33,6 @@ jobs:
         echo "tag_major=${MAJOR_VERSION}" >> "$GITHUB_OUTPUT"
         echo "download_tgz_file_url=$(jq -r '.release.assets[] | select(.name | endswith(".tgz")) | .url' "${GITHUB_EVENT_PATH}")" >> "$GITHUB_OUTPUT"
 
-        repo_owner1="$GITHUB_REPOSITORY_OWNER"
-        echo "repo_owner1 is '$repo_owner1'"
-        if echo "$repo_owner1" | grep -q '*'; then echo repo_owner1 is readacted; else echo repo_owner1 is not redacted; fi
-
-        repo_owner2="$(echo $GITHUB_REPOSITORY_OWNER)"
-        echo "repo_owner2 is '$repo_owner2'"
-        if echo "$repo_owner2" | grep -q '*'; then echo repo_owner2 is readacted; else echo repo_owner2 is not redacted; fi
-
-        echo $GITHUB_REPOSITORY_OWNER > repo_owner.txt
-        echo "Contents of repo_owner.txt:"
-        cat repo_owner.txt
-        repo_owner3="$(cat repo_owner.txt)"
-        if echo "$repo_owner3" | grep -q '*'; then echo repo_owner3 is readacted; else echo repo_owner3 is not redacted; fi
-
-        echo "GITHUB_REPOSITORY_OWNER is '$GITHUB_REPOSITORY_OWNER'"
-        # # This is a workaround for testing in forks because GITHUB_REPOSITORY_OWNER is redacted and unavailable from the github context
-        # if echo "$GITHUB_REPOSITORY_OWNER" | grep -q '*'; then
-          echo "GITHUB_REPOSITORY_OWNER is redacted. Determining repo owner from .git/config"
-          echo "repo_owner=$(git config --get remote.origin.url | sed 's|.*[:/]\([^/]*\)/[^/]*\.git|\1|')" >> "$GITHUB_OUTPUT"
-
-          echo "Contents of event payload $GITHUB_EVENT_PATH:"
-          cat $GITHUB_EVENT_PATH
-        # else
-        #   echo "GITHUB_REPOSITORY_OWNER is available and will be used"
-        #   echo "repo_owner=${GITHUB_REPOSITORY_OWNER}" >> "$GITHUB_OUTPUT"
-        # fi
-
     - name: Download .tgz buildpack release artifact
       uses: paketo-buildpacks/github-config/actions/release/download-asset@main
       with:
@@ -90,7 +63,7 @@ jobs:
     - name: Install yj and crane
       uses: buildpacks/github-actions/setup-tools@v5.5.4
 
-    - name: Validate version and extract buildpack release artifact
+    - name: Validate version
       run: |
         buidpackTomlVersion=$(tar -xzf buildpack-release-artifact.tgz --to-stdout buildpack.toml | yj -tj | jq -r .buildpack.version)
         githubReleaseVersion="${{ steps.event.outputs.tag_full }}"
@@ -98,9 +71,6 @@ jobs:
           echo "Version in buildpack.toml ($buidpackTomlVersion) and github release ($githubReleaseVersion) are not identical"
           exit 1
         fi
-
-        # Extract the buildpack release artifact to the workspace so scripts/publish.sh can use it
-        tar -xvzf buildpack-release-artifact.tgz
 
     - name: Docker login docker.io
       uses: docker/login-action@v3
@@ -121,6 +91,7 @@ jobs:
       if: ${{  steps.parse_configs.outputs.push_to_gcr == 'true' }}
       run: |
         ./scripts/publish.sh \
+          --archive-path buildpack-release-artifact.tgz \
           --image-ref "gcr.io/${{ github.repository }}:${{ steps.event.outputs.tag_full }}"
 
         crane copy "gcr.io/${{ github.repository }}:${{ steps.event.outputs.tag_full }}" "gcr.io/${{ github.repository }}:${{ steps.event.outputs.tag_minor }}"
@@ -130,15 +101,12 @@ jobs:
     - name: Push to DockerHub
       if: ${{  steps.parse_configs.outputs.push_to_dockerhub == 'true' }}
       id: push
-      env:
-        # REPO_OWNER: ${{ steps.event.outputs.repo_owner }}
-        REPO_OWNER: jericop
       run: |
-        set -x
-        REPOSITORY="${REPO_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/bundle-install' to 'paketobuildpacks/bundle-install'
+        REPOSITORY="${GITHUB_REPOSITORY_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/bundle-install' to 'paketobuildpacks/bundle-install'
         IMAGE="index.docker.io/${REPOSITORY}"
 
         ./scripts/publish.sh \
+          --archive-path buildpack-release-artifact.tgz \
           --image-ref "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}"
 
         pushed_image_index_digest=$(crane digest "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" | xargs)
