@@ -108,11 +108,11 @@ jobs:
           --archive-path buildpack-release-artifact.tgz \
           --image-ref "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}"
 
-        pushed_image_index_digest=$(crane digest "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" | xargs)
+        pushed_image_index_digest=$(crane digest "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" | xargs)
 
-        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_minor }}"
-        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_major }}"
-        crane copy "${DOCKERHUB_REGISTRY}/${IMAGE}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${IMAGE}:latest"
+        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_minor }}"
+        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_major }}"
+        crane copy "${DOCKERHUB_REGISTRY}/${REPOSITORY}:${{ steps.event.outputs.tag_full }}" "${DOCKERHUB_REGISTRY}/${REPOSITORY}:latest"
 
         echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
         echo "digest=$pushed_image_index_digest" >> "$GITHUB_OUTPUT"
