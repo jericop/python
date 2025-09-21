@@ -48,17 +48,17 @@ jobs:
         if echo "$repo_owner3" | grep -q '*'; then echo repo_owner3 is readacted; else echo repo_owner3 is not redacted; fi
 
         echo "GITHUB_REPOSITORY_OWNER is '$GITHUB_REPOSITORY_OWNER'"
-        # This is a workaround for testing in forks because GITHUB_REPOSITORY_OWNER is redacted and unavailable from the github context
-        if echo "$GITHUB_REPOSITORY_OWNER" | grep -q '*'; then
+        # # This is a workaround for testing in forks because GITHUB_REPOSITORY_OWNER is redacted and unavailable from the github context
+        # if echo "$GITHUB_REPOSITORY_OWNER" | grep -q '*'; then
           echo "GITHUB_REPOSITORY_OWNER is redacted. Determining repo owner from .git/config"
           echo "repo_owner=$(git config --get remote.origin.url | sed 's|.*[:/]\([^/]*\)/[^/]*\.git|\1|')" >> "$GITHUB_OUTPUT"
 
           echo "Contents of event payload $GITHUB_EVENT_PATH:"
           cat $GITHUB_EVENT_PATH
-        else
-          echo "GITHUB_REPOSITORY_OWNER is available and will be used"
-          echo "repo_owner=${GITHUB_REPOSITORY_OWNER}" >> "$GITHUB_OUTPUT"
-        fi
+        # else
+        #   echo "GITHUB_REPOSITORY_OWNER is available and will be used"
+        #   echo "repo_owner=${GITHUB_REPOSITORY_OWNER}" >> "$GITHUB_OUTPUT"
+        # fi
 
     - name: Download .tgz buildpack release artifact
       uses: paketo-buildpacks/github-config/actions/release/download-asset@main
