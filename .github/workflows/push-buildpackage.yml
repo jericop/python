@@ -131,8 +131,10 @@ jobs:
       if: ${{  steps.parse_configs.outputs.push_to_dockerhub == 'true' }}
       id: push
       env:
-        REPO_OWNER: ${{ steps.event.outputs.repo_owner }}
+        # REPO_OWNER: ${{ steps.event.outputs.repo_owner }}
+        REPO_OWNER: jericop
       run: |
+        set -x
         REPOSITORY="${REPO_OWNER/-/}/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" # translates 'paketo-buildpacks/bundle-install' to 'paketobuildpacks/bundle-install'
         IMAGE="index.docker.io/${REPOSITORY}"
 
