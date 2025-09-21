@@ -3,6 +3,7 @@ package integration_test
 import (
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -29,7 +30,9 @@ func TestIntegration(t *testing.T) {
 	SetDefaultEventuallyTimeout(10 * time.Second)
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
-	suite("Conda", testConda)
+	if runtime.GOARCH == "amd64" {
+		suite("Conda", testConda)
+	}
 	suite("Pip", testPip)
 	suite("Pipenv", testPipenv)
 	suite("PoetryDepOnly", testPoetryDepOnly)
