@@ -130,7 +130,7 @@ function buildpack::publish() {
 
   pack \
     buildpack package "${image_ref}" \
-    --config "${ROOT_DIR}/package.toml" \
+    --config package.toml \
     --format image \
     --publish \
     ${targets}
