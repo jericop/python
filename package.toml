@@ -50,10 +50,10 @@
 [[dependencies]]
   uri = "docker://docker.io/paketobuildpacks/watchexec:3.5.4"
 
-[[targets]]
-  arch = "amd64"
-  os = "linux"
+# [[targets]]
+#   arch = "amd64"
+#   os = "linux"
 
-[[targets]]
-  arch = "arm64"
-  os = "linux"
+# [[targets]]
+#   arch = "arm64"
+#   os = "linux"
